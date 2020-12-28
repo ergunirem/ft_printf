@@ -4,6 +4,13 @@
 # include <stdlib.h>
 # include "libft/libft.h"
 
+char RED[] = "\033[1;31m";
+char GREEN[] = "\033[0;32m";
+char PURPLE[] = "\033[0;35m";
+char YELLOW[] = "\033[0;33m";
+char BLUE[] = "\033[0;36m";
+char RESET[]= "\033[0m";
+
 typedef	struct			s_data
 {
 	// int					index;
@@ -124,10 +131,10 @@ void get_argument(const char *format, int *i, t_data *data)
 		else
 			parse_flags(format, data, i);
 	}
-	printf("type: %c ", data->type);
-	printf("flag: %s ", data->flag);
-	printf("width: %s ", data->width);
-	printf("precision: %s ", data->precision);
+	printf("%s  >> type: %s%c ", BLUE, RESET, data->type);
+	printf("%sflag: %s%s ", PURPLE, RESET, data->flag);
+	printf("%swidth: %s%s ", GREEN, RESET, data->width);
+	printf("%sprecision: %s%s ", YELLOW, RESET, data->precision);
 }
 
 int	print_regular(const char *format, int *i)
@@ -180,6 +187,11 @@ char	*handle_string(char *str)
 // 	return (to_print);
 // }
 
+// char *handle_integers(void *pointer) // different case with decimals, hexedecimals!
+// {
+
+// }
+
 char	*handle_argument(va_list args, t_data *data, char *to_print)
 {
 	char *tmp;
@@ -192,9 +204,9 @@ char	*handle_argument(va_list args, t_data *data, char *to_print)
 	// 	tmp = handle_pointer(va_arg(args, void *));
 	if (data->type == '%')
 		tmp = ft_strdup("%");
-	if (data->type == 'd' || data->type == 'i' ||data->type == 'u' ||
-	data->type == 'x' || data->type == 'X')
-		tmp = handle_integer(args);
+	// if (data->type == 'd' || data->type == 'i' ||data->type == 'u' ||
+	// data->type == 'x' || data->type == 'X')
+	// 	tmp = handle_integers(args);
 	free(to_print);
 	to_print = tmp;
 	return (to_print); //should I return to_print or does it authomatically change outside of this function?
@@ -215,6 +227,7 @@ int	print_argument(va_list args, t_data *data)
 
 	//check if to_print is null and return -1?
 	arg_len = ft_strlen(to_print);
+	ft_putstr_fd(to_print, 1);
 	free(to_print);
 	return(arg_len);
 }
@@ -242,8 +255,8 @@ int	parse_format(const char *format, va_list args)
 				break ; // which loop does this break from? is it okay? or return (-1)?
 			get_argument(format, &i, data);
 			//print this particular arg with t_data info? + free data?
-			format_len += print_argument(args, data);
-			printf("ONE ARG DONE!\n");
+			format_len += print_argument(args, data); //returns one less than real printf! Is it the null terminator?
+			printf("%s !arg!%s\n", RED, RESET);
 			free_t_data(data);
 		}
 	}
@@ -276,11 +289,12 @@ int main(void)
 {
 	int	return_val;
 	// return_val = ft_printf("This is regular input. These are argument inputs:\nchar:%# c AND\nstring:%s", 'X', "mahmut");
-	return_val = ft_printf("This\n%-0c &\n%s &\n%3.5d &\n%-4d", 'X', "mahmut", 1234, 3456);
+	// return_val = ft_printf("This\n%-0c &\n%s &\n%3.5d &\n%-4d", 'X', "mahmut", 1234, 3456);
+	return_val = ft_printf("This\n%-0c \n%s", 'X', "mahmut");
 	// return_val = ft_printf("This is regular input.");
 	ft_printf("\n");
 	printf("ft_return_val: %d\n", return_val);
-	// return_val = printf("what will happen %c and %s", 'X', "mahmut");
+	// return_val = printf("This\n%c \n%s", 'X', "mahmut");
 	// printf("\n");
 	// printf("li_return_val: %d\n", return_val);
 	return (0);
