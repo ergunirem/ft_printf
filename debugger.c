@@ -20,13 +20,9 @@ typedef	struct			s_data
 	char				*width;
 	char				*precision;
 	int					length;
-	// char				*content;
-	int					counter;
-	// double				n_double;
-	// struct s_data		*next;
 }						t_data;
 
-t_data	*create_t_data(int format_len)
+t_data	*create_t_data(void)
 {
 	t_data *data;
 
@@ -38,8 +34,6 @@ t_data	*create_t_data(int format_len)
 	data->width = 0;
 	data->precision = 0;
 	data->length = 0;
-	data->counter = format_len;
-	// data->next = NULL;
 	return (data);
 }
 
@@ -63,7 +57,6 @@ char	*get_flag(const char *format, int *i)
 	return (ft_substr(format, start, *i - start));
 }
 
-//pdf says minimum field? difference with max?
 char	*get_width(const char *format, int *i)
 {
 	int	start;
@@ -85,10 +78,10 @@ char	*get_precision(const char *format, int *i)
 {
 	int	start;
 
-	start = *i;
 	if (format[*i] != '.')
 		return(ft_strdup(""));
 	(*i)++;
+	start = *i;
 	if (format[*i] == '*')
 	{
 		(*i)++;
@@ -103,8 +96,8 @@ char	*get_precision(const char *format, int *i)
 
 int	parse_flags(const char *format, t_data *data, int *i)
 {
- //follow the format specifier prototype order while you are calling functions!
- //%[flags][width][.precision][length]specifier
+	//follow the format specifier prototype order while you are calling functions!
+	//%[flags][width][.precision][length]specifier
 	data->flag = get_flag(format, i);
 	data->width = get_width(format, i);
 	data->precision = get_precision(format, i);
@@ -131,10 +124,10 @@ void get_argument(const char *format, int *i, t_data *data)
 		else
 			parse_flags(format, data, i);
 	}
-	printf("%s  >> type: %s%c ", BLUE, RESET, data->type);
-	printf("%sflag: %s%s ", PURPLE, RESET, data->flag);
-	printf("%swidth: %s%s ", GREEN, RESET, data->width);
-	printf("%sprecision: %s%s ", YELLOW, RESET, data->precision);
+	// printf("%s  >> type: %s%c ", BLUE, RESET, data->type);
+	// printf("%sflag: %s%s ", PURPLE, RESET, data->flag);
+	// printf("%swidth: %s%s ", GREEN, RESET, data->width);
+	// printf("%sprecision: %s%s ", YELLOW, RESET, data->precision);
 }
 
 int	print_regular(const char *format, int *i)
@@ -176,21 +169,50 @@ char	*handle_string(char *str)
 	return (to_print);
 }
 
-// char *handle_pointer(void *pointer)
-// {
-// 	char *to_print;
-// 	char *str;
+char	*handle_pointer(void *pointer)
+{
+	char *to_print;
+	char *str;
 
-// 	str = ft_xtoa(); // you need to write it downnnn!
-// 	to_print = ft_strjoin("0x", str);
-// 	free(str);
-// 	return (to_print);
-// }
+	str = ft_xtoa((unsigned long long int)pointer);
+	to_print = ft_strjoin("0x", str);
+	free(str);
+	return (to_print);
+}
 
-// char *handle_integers(void *pointer) // different case with decimals, hexedecimals!
-// {
+char	*handle_decimal(int nbr)
+{
+	char *to_print;
 
-// }
+	to_print = ft_itoa(nbr);
+	return (to_print);
+}
+
+char	*handle_unsigned(unsigned int nbr)
+{
+	char *to_print;
+
+	to_print = ft_itoa(nbr);
+	return (to_print);
+}
+
+char	*handle_hexa(unsigned int nbr, char c)
+{
+	char	*to_print;
+	int		i;
+
+	to_print = ft_xtoa(nbr);
+	if (c == 'X')
+	{
+		i = 0;
+		while (to_print[i])
+		{
+			to_print[i] = ft_toupper(to_print[i]);
+			i++;
+		}
+	}
+	return (to_print);
+}
 
 char	*handle_argument(va_list args, t_data *data, char *to_print)
 {
@@ -200,19 +222,74 @@ char	*handle_argument(va_list args, t_data *data, char *to_print)
 		tmp = handle_char(va_arg(args, int));
 	if (data->type == 's')
 		tmp = handle_string(va_arg(args, char *));
-	// if (data->type == 'p')
-	// 	tmp = handle_pointer(va_arg(args, void *));
+	if (data->type == 'p')
+		tmp = handle_pointer(va_arg(args, void *));
 	if (data->type == '%')
 		tmp = ft_strdup("%");
-	// if (data->type == 'd' || data->type == 'i' ||data->type == 'u' ||
-	// data->type == 'x' || data->type == 'X')
-	// 	tmp = handle_integers(args);
+	if (data->type == 'd' || data->type == 'i')
+		tmp = handle_decimal(va_arg(args, int));
+	if (data->type == 'u')
+		tmp = handle_unsigned(va_arg(args, unsigned int));
+	if (data->type == 'x' || data->type == 'X')
+		tmp = handle_hexa(va_arg(args, unsigned int), data->type);//why  unsingedint?
 	free(to_print);
-	to_print = tmp;
-	return (to_print); //should I return to_print or does it authomatically change outside of this function?
+	return (tmp);
 }
 
-int	print_argument(va_list args, t_data *data)
+char	*adjust_int_precision(char *to_print, int precision, int len)
+{
+	char	*tmp;
+	char	*sign;
+	char	*pad;
+	char	*padded_str;
+	int		is_negative;
+
+	is_negative = 0;
+	if (to_print[0] == '-')
+		is_negative = 1;
+	//if precision is smaller than dont touch to_print & 0 exception
+	if (len - is_negative >= precision)
+	{	//exception: precision = 0 and to_print = 0;
+		if (precision == 0 & to_print[0] == '0') //(difference with hexa&p??
+			return(ft_strdup(""));
+		return (to_print);
+	}
+	//othewise pad with 0's
+	sign = ft_substr(to_print, 0 , is_negative);
+	pad = (char *)ft_calloc(precision + is_negative - len + 1, sizeof(char));
+	pad = ft_memset(pad, '0', precision + is_negative - len);
+	padded_str = ft_strjoin(pad, to_print + is_negative);
+	tmp = ft_strjoin(sign, padded_str);
+	free(pad);
+	free(sign);
+	free(padded_str);
+	return (tmp);
+}
+//type == 'c'??
+char	*adjust_precision(t_data *data, char *to_print)
+{
+	char	*tmp;
+	int		precision;
+	int		len;
+
+	if (!to_print || !data->precision)
+		return (to_print);
+	precision = ft_atoi(data->precision);
+	len = ft_strlen(to_print);
+	if (data->type == 's' && precision < len)
+		tmp = ft_substr(to_print, 0, precision);
+	//error: precision used with 'p' conversion specifier, resulting in undefined behavior while testing?
+	if (data->type == 'p')
+		return (to_print);
+	if (data->type == 'c')
+		return (to_print);
+	if (data->type == 'd' || data->type == 'i' || data->type == 'u' || data->type == 'x' || data->type == 'X')
+		tmp = adjust_int_precision(to_print, precision, len);
+	free(to_print);
+	return (tmp);
+}
+
+int		print_argument(va_list args, t_data *data)
 {
 	int		arg_len;
 	char	*to_print;
@@ -223,7 +300,8 @@ int	print_argument(va_list args, t_data *data)
 		return (-1); //then what in parse_format func?
 	//what about * w/width and precision?
 	to_print = handle_argument(args, data, to_print);
-
+	to_print = adjust_precision(data, to_print);
+	// to_print = apply_flag();
 
 	//check if to_print is null and return -1?
 	arg_len = ft_strlen(to_print);
@@ -244,19 +322,18 @@ int	parse_format(const char *format, va_list args)
 	while (format[i] != '\0')
 	{
 		if (format[i] != '%' && format[i])
-			format_len += print_regular(format, &i); //another function to parse regular input?
+			format_len += print_regular(format, &i);
 		else if (format[i])
 		{
-			data = create_t_data(format_len);
+			data = create_t_data();
 			if (!data)
 				return (-1);
 			//check if there are further symbols (cspdiouxXfyb%#-+ .*0123456789hLljz)?
 			if (!ft_strchr("cspdiouxXfyb%#-+ .*0123456789hLljz", format[i + 1])) //another function is valid_type_flag etc.
 				break ; // which loop does this break from? is it okay? or return (-1)?
 			get_argument(format, &i, data);
-			//print this particular arg with t_data info? + free data?
-			format_len += print_argument(args, data); //returns one less than real printf! Is it the null terminator?
-			printf("%s !arg!%s\n", RED, RESET);
+			format_len += print_argument(args, data);
+			// printf("%s !arg!%s\n", RED, RESET);
 			free_t_data(data);
 		}
 	}
@@ -287,15 +364,83 @@ int	ft_printf(const char *format, ...)
 
 int main(void)
 {
-	int	return_val;
-	// return_val = ft_printf("This is regular input. These are argument inputs:\nchar:%# c AND\nstring:%s", 'X', "mahmut");
-	// return_val = ft_printf("This\n%-0c &\n%s &\n%3.5d &\n%-4d", 'X', "mahmut", 1234, 3456);
-	return_val = ft_printf("This\n%-0c \n%s", 'X', "mahmut");
-	// return_val = ft_printf("This is regular input.");
+	int	ptr;
+	unsigned char c = 0x7f;
+
+	ptr = 8;
+
+	//my func
+	printf("\n%s--ft func--%s\n\n", RED, RESET);
+	ft_printf("\nreturn value = %d", ft_printf("Regular argument\n\n%-0c \n%.4s \n%p \n%.8d \n%.06u \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
 	ft_printf("\n");
-	printf("ft_return_val: %d\n", return_val);
-	// return_val = printf("This\n%c \n%s", 'X', "mahmut");
-	// printf("\n");
-	// printf("li_return_val: %d\n", return_val);
+
+	// ft_printf("%.6u", 999);
+
+	//lib func
+	printf("\n%s--library func--%s\n\n", RED, RESET);
+	printf(  "\nreturn value = %d\n", printf("Regular argument\n\n%-c \n%.4s \n%p \n%.8d \n%.06u \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
 	return (0);
 }
+
+// int main(void)
+// {
+// 	int				di = 28;
+// 	printf("\n%s/////////////////////////////////////////////////////////////////////////////////////////////////////%s\n\n", YELLOW, RESET);
+// 	printf("%sHandling precision%s (controls the max number of characters to print)\n", PURPLE, RESET);
+// 	printf("%sA dot (.) followed by a number > %%.5d or %%.02d\n\n%s", GREEN, RESET);
+
+// 	printf(" (%d)\n", printf("(0) P. 0: |%.0i|", 0));
+// 	ft_printf(" (%d)\n", ft_printf("(0) P. 0: |%.0i|", 0));
+// 	printf(" (%d)\n", printf("(0) P. 1: |%.1i|", 0));
+// 	ft_printf(" (%d)\n", ft_printf("(0) P. 1: |%.1i|", 0));
+// 	printf(" (%d)\n", printf("(0) P. 2: |%.2i|", 0));
+// 	ft_printf(" (%d)\n", ft_printf("(0) P. 2: |%.2i|", 0));
+// 	printf(" (%d)\n", printf("P. 0: |%.0i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 0: |%.0i|", di));
+// 	printf(" (%d)\n", printf("P. 1: |%.1i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 1: |%.1i|", di));
+// 	printf(" (%d)\n", printf("P. 2: |%.2i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 2: |%.2i|", di));
+// 	printf(" (%d)\n", printf("P. 3: |%.3i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 3: |%.3i|", di));
+// 	printf(" (%d)\n", printf("P. 4: |%.4i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 4: |%.4i|", di));
+// 	printf(" (%d)\n", printf("P. 5: |%.5i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 5: |%.5i|", di));
+// 	printf(" (%d)\n", printf("P. 10: |%.10i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 10: |%.10i|", di));
+// 	printf(" (%d)\n", printf("P. 15: |%.15i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 15: |%.15i|", di));
+// 	printf(" (%d)\n", printf("P. 42: |%.42i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P. 42: |%.42i|", di));
+
+// 	printf("\n");
+// 	printf(" (%d)\n", printf("(0) P .00: |%.00i|", 0));
+// 	ft_printf(" (%d)\n", ft_printf("(0) P .00: |%.00i|", 0));
+// 	printf(" (%d)\n", printf("(0) P .01: |%.01i|", 0));
+// 	ft_printf(" (%d)\n", ft_printf("(0) P .01: |%.01i|", 0));
+// 	printf(" (%d)\n", printf("P .00: |%.00i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .00: |%.00i|", di));
+// 	printf(" (%d)\n", printf("P .01: |%.01i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .01: |%.01i|", di));
+// 	printf(" (%d)\n", printf("P .02: |%.02i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .02: |%.02i|", di));
+// 	printf(" (%d)\n", printf("P .03: |%.03i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .03: |%.03i|", di));
+// 	printf(" (%d)\n", printf("P .04: |%.04i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .04: |%.04i|", di));
+// 	printf(" (%d)\n", printf("P .05: |%.05i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .05: |%.05i|", di));
+// 	printf(" (%d)\n", printf("P .010: |%.010i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .010: |%.010i|", di));
+// 	printf(" (%d)\n", printf("P .015: |%.015i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .015: |%.015i|", di));
+// 	printf(" (%d)\n", printf("P .042: |%.042i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .042: |%.042i|", di));
+
+// 	printf(" (%d)\n", printf("P .007: |%.007i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .007: |%.007i|", di));
+// 	printf(" (%d)\n", printf("P .000000000007: |%.000000000007i|", di));
+// 	ft_printf(" (%d)\n", ft_printf("P .000000000007: |%.000000000007i|", di));
+// 	return (0);
+// }

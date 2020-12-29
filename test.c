@@ -6,19 +6,20 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/25 15:23:29 by icikrikc      #+#    #+#                 */
-/*   Updated: 2020/12/27 16:51:15 by icikrikc      ########   odam.nl         */
+/*   Updated: 2020/12/29 23:28:55 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "ft_printf.h"
 #include <stdio.h>
+#include "debugger.c"
 
-char RED[] = "\033[1;31m";
-char GREEN[] = "\033[0;32m";
-char PURPLE[] = "\033[0;35m";
-char YELLOW[] = "\033[0;33m";
-char BLUE[] = "\033[0;36m";
-char RESET[]= "\033[0m";
+// char RED[] = "\033[1;31m";
+// char GREEN[] = "\033[0;32m";
+// char PURPLE[] = "\033[0;35m";
+// char YELLOW[] = "\033[0;33m";
+// char BLUE[] = "\033[0;36m";
+// char RESET[]= "\033[0m";
 
 int main(void)
 {
@@ -56,58 +57,58 @@ int main(void)
 	printf("%sA dot (.) followed by a number > %%.5d or %%.02d\n\n%s", GREEN, RESET);
 
 	printf(" (%d)\n", printf("(0) P. 0: |%.0i|", 0));
-	// ft_printf(" (%d)\n", ft_printf("(0) P. 0: |%.0i|", 0));
+	ft_printf(" (%d)\n", ft_printf("(0) P. 0: |%.0i|", 0));
 	printf(" (%d)\n", printf("(0) P. 1: |%.1i|", 0));
-	// ft_printf(" (%d)\n", ft_printf("(0) P. 1: |%.1i|", 0));
+	ft_printf(" (%d)\n", ft_printf("(0) P. 1: |%.1i|", 0));
 	printf(" (%d)\n", printf("(0) P. 2: |%.2i|", 0));
-	// ft_printf(" (%d)\n", ft_printf("(0) P. 2: |%.2i|", 0));
+	ft_printf(" (%d)\n", ft_printf("(0) P. 2: |%.2i|", 0));
 	printf(" (%d)\n", printf("P. 0: |%.0i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 0: |%.0i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 0: |%.0i|", di));
 	printf(" (%d)\n", printf("P. 1: |%.1i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 1: |%.1i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 1: |%.1i|", di));
 	printf(" (%d)\n", printf("P. 2: |%.2i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 2: |%.2i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 2: |%.2i|", di));
 	printf(" (%d)\n", printf("P. 3: |%.3i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 3: |%.3i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 3: |%.3i|", di));
 	printf(" (%d)\n", printf("P. 4: |%.4i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 4: |%.4i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 4: |%.4i|", di));
 	printf(" (%d)\n", printf("P. 5: |%.5i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 5: |%.5i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 5: |%.5i|", di));
 	printf(" (%d)\n", printf("P. 10: |%.10i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 10: |%.10i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 10: |%.10i|", di));
 	printf(" (%d)\n", printf("P. 15: |%.15i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 15: |%.15i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 15: |%.15i|", di));
 	printf(" (%d)\n", printf("P. 42: |%.42i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P. 42: |%.42i|", di));
+	ft_printf(" (%d)\n", ft_printf("P. 42: |%.42i|", di));
 
 	printf("\n");
 	printf(" (%d)\n", printf("(0) P .00: |%.00i|", 0));
-	// ft_printf(" (%d)\n", ft_printf("(0) P .00: |%.00i|", 0));
+	ft_printf(" (%d)\n", ft_printf("(0) P .00: |%.00i|", 0));
 	printf(" (%d)\n", printf("(0) P .01: |%.01i|", 0));
-	// ft_printf(" (%d)\n", ft_printf("(0) P .01: |%.01i|", 0));
+	ft_printf(" (%d)\n", ft_printf("(0) P .01: |%.01i|", 0));
 	printf(" (%d)\n", printf("P .00: |%.00i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .00: |%.00i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .00: |%.00i|", di));
 	printf(" (%d)\n", printf("P .01: |%.01i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .01: |%.01i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .01: |%.01i|", di));
 	printf(" (%d)\n", printf("P .02: |%.02i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .02: |%.02i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .02: |%.02i|", di));
 	printf(" (%d)\n", printf("P .03: |%.03i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .03: |%.03i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .03: |%.03i|", di));
 	printf(" (%d)\n", printf("P .04: |%.04i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .04: |%.04i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .04: |%.04i|", di));
 	printf(" (%d)\n", printf("P .05: |%.05i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .05: |%.05i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .05: |%.05i|", di));
 	printf(" (%d)\n", printf("P .010: |%.010i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .010: |%.010i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .010: |%.010i|", di));
 	printf(" (%d)\n", printf("P .015: |%.015i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .015: |%.015i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .015: |%.015i|", di));
 	printf(" (%d)\n", printf("P .042: |%.042i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .042: |%.042i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .042: |%.042i|", di));
 
 	printf(" (%d)\n", printf("P .007: |%.007i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .007: |%.007i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .007: |%.007i|", di));
 	printf(" (%d)\n", printf("P .000000000007: |%.000000000007i|", di));
-	// ft_printf(" (%d)\n", ft_printf("P .000000000007: |%.000000000007i|", di));
+	ft_printf(" (%d)\n", ft_printf("P .000000000007: |%.000000000007i|", di));
 
 	printf("\n%s/////////////////////////////////////////////////////////////////////////////////////////////////////%s\n\n", YELLOW, RESET);
 	printf("%sHandling precision & minimum field width%s\n", PURPLE, RESET);
