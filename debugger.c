@@ -252,7 +252,7 @@ char	*adjust_int_precision(char *to_print, int precision, int len)
 	{	//exception: precision = 0 and to_print = 0;
 		if (precision == 0 & to_print[0] == '0') //(difference with hexa&p??
 			return(ft_strdup(""));
-		return (to_print);
+		return (ft_strdup(to_print));
 	}
 	//othewise pad with 0's
 	sign = ft_substr(to_print, 0 , is_negative);
@@ -265,7 +265,7 @@ char	*adjust_int_precision(char *to_print, int precision, int len)
 	free(padded_str);
 	return (tmp);
 }
-//type == 'c'??
+
 char	*adjust_precision(t_data *data, char *to_print)
 {
 	char	*tmp;
@@ -278,7 +278,6 @@ char	*adjust_precision(t_data *data, char *to_print)
 	len = ft_strlen(to_print);
 	if (data->type == 's' && precision < len)
 		tmp = ft_substr(to_print, 0, precision);
-	//error: precision used with 'p' conversion specifier, resulting in undefined behavior while testing?
 	if (data->type == 'p')
 		return (to_print);
 	if (data->type == 'c')
@@ -289,19 +288,35 @@ char	*adjust_precision(t_data *data, char *to_print)
 	return (tmp);
 }
 
+void	apply_flag(t_data data, int *width, char *alignment, char *filler)
+{
+	*width = (int)ft_atoi(data->width);
+	if (ft_strchr(data->flag, '-') || *width < 0)
+		*alignment = 'L';
+	if (*alignment == 'R' && ft_strchr(data->flag, '0') > 0 && !((data->type == 'd' || data->type == 'i' || data->type == 'u' || data->type == 'x' || data->type == 'X') && ft_strlen(data->precision) > 0))
+		*filler = '0';
+}
+
 int		print_argument(va_list args, t_data *data)
 {
 	int		arg_len;
+	int		width;
 	char	*to_print;
+	char	alignment;
+	char	filler;
 
 	arg_len = 0;
+	//default values > will be adjusted based on flags,precision,width
+	width = 0;
+	alignment = 'R';
+	filler = ' ';
 	to_print = ft_strdup("");
 	if (!to_print)
 		return (-1); //then what in parse_format func?
 	//what about * w/width and precision?
 	to_print = handle_argument(args, data, to_print);
 	to_print = adjust_precision(data, to_print);
-	// to_print = apply_flag();
+	apply_flag(data, &width, &alignment, &filler);
 
 	//check if to_print is null and return -1?
 	arg_len = ft_strlen(to_print);
