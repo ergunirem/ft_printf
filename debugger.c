@@ -288,13 +288,39 @@ char	*adjust_precision(t_data *data, char *to_print)
 	return (tmp);
 }
 
-void	apply_flag(t_data data, int *width, char *alignment, char *filler)
+void	apply_flag(t_data *data, int *width, char *alignment, char *filler)
 {
 	*width = (int)ft_atoi(data->width);
 	if (ft_strchr(data->flag, '-') || *width < 0)
 		*alignment = 'L';
 	if (*alignment == 'R' && ft_strchr(data->flag, '0') > 0 && !((data->type == 'd' || data->type == 'i' || data->type == 'u' || data->type == 'x' || data->type == 'X') && ft_strlen(data->precision) > 0))
 		*filler = '0';
+}
+
+char	*adjust_width(char *to_print, int width, char alignment, char filler)
+{
+	char	*tmp;
+	char	*pad;
+
+	if (width > (int)ft_strlen(to_print))
+	{
+		pad = (char *)ft_calloc(width - ft_strlen(to_print) + 1, sizeof(char));
+		pad = ft_memset(pad, filler, width  - ft_strlen(to_print)); //another func?
+		if (alignment == 'L')
+			tmp = ft_strjoin(to_print, pad); //3
+		// if (alignment == 'R' && target == '0') // && data->type > integers!
+		// {
+		// 	s_fill = ft_strjoin(pad, to_print + check_sign); //1
+		// 	tmp = ft_strjoin(s_sign, s_fill); //2
+		// }
+		if (alignment == 'R' && filler != '0') //what happens when check_sign = 0;
+			tmp = ft_strjoin(pad, to_print); //1
+		free(pad);
+		free(to_print);
+		return (tmp);
+	}
+	else
+		return (to_print);
 }
 
 int		print_argument(va_list args, t_data *data)
@@ -313,15 +339,15 @@ int		print_argument(va_list args, t_data *data)
 	to_print = ft_strdup("");
 	if (!to_print)
 		return (-1); //then what in parse_format func?
-	//what about * w/width and precision?
+	//what about '*' w/width and precision?
 	to_print = handle_argument(args, data, to_print);
 	to_print = adjust_precision(data, to_print);
 	apply_flag(data, &width, &alignment, &filler);
-
+	to_print = adjust_width(to_print, width, alignment, filler);
 	//check if to_print is null and return -1?
 	arg_len = ft_strlen(to_print);
 	ft_putstr_fd(to_print, 1);
-	free(to_print);
+	free(to_print); // where to free?
 	return(arg_len);
 }
 
@@ -386,14 +412,14 @@ int main(void)
 
 	//my func
 	printf("\n%s--ft func--%s\n\n", RED, RESET);
-	ft_printf("\nreturn value = %d", ft_printf("Regular argument\n\n%-0c \n%.4s \n%p \n%.8d \n%.06u \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
+	ft_printf("\nreturn value = %d", ft_printf("Regular argument\n\n%c \n%.4s \n%p \n%.8d \n|%-9.06u| \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
 	ft_printf("\n");
 
 	// ft_printf("%.6u", 999);
 
 	//lib func
 	printf("\n%s--library func--%s\n\n", RED, RESET);
-	printf(  "\nreturn value = %d\n", printf("Regular argument\n\n%-c \n%.4s \n%p \n%.8d \n%.06u \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
+	printf(  "\nreturn value = %d\n", printf("Regular argument\n\n%-c \n%.4s \n%p \n%.8d \n|%9.06u| \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
 	return (0);
 }
 
@@ -457,5 +483,9 @@ int main(void)
 // 	ft_printf(" (%d)\n", ft_printf("P .007: |%.007i|", di));
 // 	printf(" (%d)\n", printf("P .000000000007: |%.000000000007i|", di));
 // 	ft_printf(" (%d)\n", ft_printf("P .000000000007: |%.000000000007i|", di));
+
+
+
+
 // 	return (0);
 // }
