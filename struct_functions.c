@@ -6,13 +6,13 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/24 21:37:38 by ergunirem     #+#    #+#                 */
-/*   Updated: 2020/12/25 15:47:37 by icikrikc      ########   odam.nl         */
+/*   Updated: 2020/12/31 18:43:19 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-t_data	*create_t_data(int format_len)
+t_data	*create_t_data(void)
 {
 	t_data *data;
 
@@ -23,9 +23,6 @@ t_data	*create_t_data(int format_len)
 	data->flag = 0;
 	data->width = 0;
 	data->precision = 0;
-	data->length = 0;
-	data->counter = format_len;
-	// data->next = NULL;
 	return (data);
 }
 

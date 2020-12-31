@@ -6,7 +6,7 @@
 #    By: icikrikc <icikrikc@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/12/19 09:07:29 by ergunirem     #+#    #+#                  #
-#    Updated: 2020/12/25 19:14:40 by icikrikc      ########   odam.nl          #
+#    Updated: 2020/12/31 19:07:52 by icikrikc      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,10 @@ NAME = libftprintf.a
 
 SOURCE_FILES =		ft_printf.c \
 					struct_functions.c \
-
+					handle_arguments.c \
+					handle_types.c \
+					parse_flags.c \
+					print.c
 
 GREEN = \033[38;5;2m
 NORMAL = \033[38;5;255m
