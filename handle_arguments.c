@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/31 18:49:33 by icikrikc      #+#    #+#                 */
-/*   Updated: 2020/12/31 20:44:08 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/01 16:21:20 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ char	*adjust_precision(t_data *data, char *to_print)
 	len = ft_strlen(to_print);
 	if (data->type == 's' && precision < len)
 		tmp = ft_substr(to_print, 0, precision);
+	if (data->type == 's' && precision >= len)
+		return (to_print);
 	if (data->type == 'p')
 		return (to_print);
 	if (data->type == 'c')

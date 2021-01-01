@@ -274,6 +274,8 @@ char	*adjust_precision(t_data *data, char *to_print)
 	len = ft_strlen(to_print);
 	if (data->type == 's' && precision < len)
 		tmp = ft_substr(to_print, 0, precision);
+	if (data->type == 's' && precision >= len)
+		return (to_print);
 	if (data->type == 'p')
 		return (to_print);
 	if (data->type == 'c')
@@ -302,7 +304,7 @@ char	*adjust_width(char *to_print, int width, char alignment, char filler)
 	char	*padded_str;
 	char	*sign;
 	int		is_negative;
-
+	//if width == 0 ?
 	is_negative = 0;
 	if (to_print[0] == '-')
 		is_negative = 1;
@@ -329,6 +331,27 @@ char	*adjust_width(char *to_print, int width, char alignment, char filler)
 	else
 		return (to_print);
 }
+void get_wildcard_arg(t_data *data, va_list args)
+{
+	long long int precision;
+
+	if (!data->width || !data->precision)
+		return ;
+	if (*(data->width) == '*')
+	{
+		free(data->width);
+		data->width = ft_itoa(va_arg(args, int));
+	}
+	if (*(data->precision) == '*')
+	{
+		precision = (long long int)va_arg(args, int);
+		free(data->precision);
+		if (precision >= 0)
+			data->precision = ft_itoa(precision);
+		else
+			data->precision = ft_strdup("");
+	}
+}
 
 int		print_argument(va_list args, t_data *data)
 {
@@ -346,7 +369,7 @@ int		print_argument(va_list args, t_data *data)
 	to_print = ft_strdup("");
 	if (!to_print)
 		return (-1); //then what in parse_format func?
-	//what about '*' w/width and precision?
+	get_wildcard_arg(data, args);
 	to_print = handle_argument(args, data, to_print);
 	to_print = adjust_precision(data, to_print);
 	apply_flag(data, &width, &alignment, &filler);
@@ -412,14 +435,55 @@ int	ft_printf(const char *format, ...)
 
 int main(void)
 {
-	int	ptr;
+	// int	di;
 	// unsigned char c = 0x7f;
 
-	ptr = 8;
+	// di = 28;
+
+	// STRINGS
+	// printf("%.7s\n", "hello");
+	// ft_printf("%.7s\n", "hello");
+	// printf(" (%d)\n", printf("%.09s", NULL));
+	// ft_printf(" (%d)\n", ft_printf("%.09s", NULL));
+	// printf(" (%d)\n", printf("%.00s", ""));
+	// ft_printf(" (%d)\n", ft_printf("%.00s", ""));
+	// printf(" (%d)\n", printf("%.01s", ""));
+	// ft_printf(" (%d)\n", ft_printf("%.01s", ""));
+	// printf(" (%d)\n", printf("%.03s", ""));
+	// ft_printf(" (%d)\n", ft_printf("%.03s", ""));
+	// printf(" (%d)\n", printf("%1.s", ""));
+	// ft_printf(" (%d)\n", ft_printf("%1.s", ""));
+	// printf(" (%d)\n", printf("%9.s", ""));
+	// ft_printf(" (%d)\n", ft_printf("%9.s", ""));
+	// printf(" (%d)\n", printf("%.*s", -1, (char *)0));
+	// ft_printf(" (%d)\n", ft_printf("%.*s", -1, (char *)0));
+	// printf(" (%d)\n", printf("%.*s", -3, (char *)0));
+	// ft_printf(" (%d)\n", ft_printf("%.*s", -3, (char *)0));
+
+
+	//NEGATIVE *PRECISION
+	printf(" (%d)\n", printf("%*s", -3, "hello"));
+	ft_printf(" (%d)\n", ft_printf("%*s", -3, "hello"));
+	printf(" (%d)\n", printf("%.*s", -3, "hello"));
+	ft_printf(" (%d)\n", ft_printf("%.*s", -3, "hello"));
+	printf(" (%d)\n", printf("%*i", -4, 94827));
+	ft_printf(" (%d)\n", ft_printf("%*i", -4, 94827));
+	printf(" (%d)\n", printf("%*i", -14, 94827));
+	ft_printf(" (%d)\n", ft_printf("%*i", -14, 94827));
+	//CHARS
+	/*printf(" (%d)\n", printf("%c", '\0'));
+	ft_printf(" (%d)\n", ft_printf("%c", '\0'));
+	printf(" (%d)\n", printf("%5c", '\0'));
+	ft_printf(" (%d)\n", ft_printf("%5c", '\0'));
+	printf(" (%d)\n", printf("%-5c", '\0'));
+	ft_printf(" (%d)\n", ft_printf("%-5c", '\0'));
+	*/
+	printf(" (%d)\n", printf("%% *.5i 42 == |% *.5i|", 4, 42));
+	ft_printf(" (%d)\n", ft_printf("%% *.5i 42 == |% *.5i|", 4, 42));
 
 	//my func
-	printf("\n%s--ft func--%s\n\n", RED, RESET);
-	// ft_printf("\nreturn value = %d", ft_printf("Regular argument\n\n%c \n%.4s \n%p \n%.8d \n|%-9.06u| \n%.0d \n%X", 'X', "mahmut", &ptr, -1223, 999, 0, c));
+	// printf("\n%s--ft func--%s\n\n", RED, RESET);
+	// ft_printf("\nreturn value = %d", ft_printf("Regular argument\n\n%c \n%.4s \n%p \n%*.8d \n|%-9.06u| \n%.0d \n%X", 'X', "mahmut", &di, 10, -1223, 999, 0, c));
 	// ft_printf("\n");
 
 	//lib func

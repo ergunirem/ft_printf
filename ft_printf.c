@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/14 18:38:43 by ergunirem     #+#    #+#                 */
-/*   Updated: 2020/12/31 20:30:56 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/01 13:37:18 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ save flag information in t_data.
 void get_argument_info(const char *format, int *i, t_data *data)
 {
 	*i = *i + 1;
-	while (ft_strchr("cspdiuxX%-.*0123456789", format[*i]))
+	while (ft_strchr("cspdiouxXfyb%#-+ .*0123456789hLljz", format[*i]))
 	{
 		// if there are no other specifier other than conversion + this leaves width etc as null!
 		if (ft_strchr("cspdiuxX%", format[*i]))
@@ -63,7 +63,7 @@ int	parse_format(const char *format, va_list args)
 			data = create_t_data();
 			if (!data)
 				return (-1);
-			if (!ft_strchr("cspdiuxX%-.*0123456789", format[i + 1])) //another function is valid_type_flag etc.
+			if (!ft_strchr("cspdiouxXfyb%#-+ .*0123456789hLljz", format[i + 1])) //another function is valid_type_flag etc.
 				break ; // which loop does this break from? is it okay? or return (-1)?
 			get_argument_info(format, &i, data);
 			format_len += print_argument(args, data);

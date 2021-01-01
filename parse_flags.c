@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/31 18:41:17 by icikrikc      #+#    #+#                 */
-/*   Updated: 2020/12/31 20:53:54 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/01 17:34:46 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,26 @@ int	parse_flags(const char *format, t_data *data, int *i)
 	if (!data->flag || !data->width || !data->precision)
 		return (-1);//?
 	return (1);
+}
+
+void get_wildcard_arg(t_data *data, va_list args)
+{
+	long long int precision;
+
+	if (!data->width || !data->precision)
+		return ;
+	if (*(data->width) == '*')
+	{
+		free(data->width);
+		data->width = ft_itoa(va_arg(args, int));
+	}
+	if (*(data->precision) == '*')
+	{
+		precision = (long long int)va_arg(args, int);
+		free(data->precision);
+		if (precision >= 0)
+			data->precision = ft_itoa(precision);
+		else
+			data->precision = ft_strdup("");
+	}
 }

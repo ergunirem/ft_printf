@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/18 18:42:07 by ergunirem     #+#    #+#                 */
-/*   Updated: 2020/12/31 19:21:31 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/01 11:56:14 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ char			*get_width(const char *format, int *i);
 char			*get_precision(const char *format, int *i);
 int				print_regular(const char *format, int *i);
 int				print_argument(va_list args, t_data *data);
+void			get_wildcard_arg(t_data *data, va_list args);
 char			*handle_argument(va_list args, t_data *data, char *to_print);
 char			*handle_hexa(unsigned int nbr, char c);
 char			*handle_unsigned(unsigned int nbr);

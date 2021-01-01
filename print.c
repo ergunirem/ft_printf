@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/31 18:58:35 by icikrikc      #+#    #+#                 */
-/*   Updated: 2020/12/31 20:59:34 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/01 11:32:16 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int		print_argument(va_list args, t_data *data)
 	to_print = ft_strdup("");
 	if (!to_print)
 		return (-1); //then what in parse_format func?
-	//what about '*' w/width and precision?
+	get_wildcard_arg(data, args);
 	to_print = handle_argument(args, data, to_print);
 	to_print = adjust_precision(data, to_print);
 	apply_flag(data, &width, &alignment, &filler);
