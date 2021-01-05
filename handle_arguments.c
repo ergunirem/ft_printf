@@ -6,14 +6,14 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/31 18:49:33 by icikrikc      #+#    #+#                 */
-/*   Updated: 2021/01/01 16:21:20 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/04 21:58:23 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
 /*
-handle_argument: based on the type conversion, it calls the appropriate handle function
+** handle_argument: based on the type conversion, it calls the appropriate handle function
 */
 
 char	*handle_argument(va_list args, t_data *data, char *to_print)
@@ -39,10 +39,10 @@ char	*handle_argument(va_list args, t_data *data, char *to_print)
 }
 
 /*
-adjust_int_precision: specific adaptation of adjust_print for integers.
-If precision is smaller than argument len, it does not change anything.
-Else if precision is bigger than len, it pads the remaining spaces with '0'.
-Also handles exception case: precision is 0 and argument is 0 returns empty string.
+** adjust_int_precision: specific adaptation of adjust_print for integers.
+** If precision is smaller than argument len, it does not change anything.
+** Else if precision is bigger than len, it pads the remaining spaces with '0'.
+** Also handles exception case: precision is 0 and argument is 0 returns empty string.
 */
 
 char	*adjust_int_precision(char *to_print, int precision, int len)
@@ -74,7 +74,7 @@ char	*adjust_int_precision(char *to_print, int precision, int len)
 }
 
 /*
-adjust_precision: ?
+** adjust_precision: ?
 */
 
 char	*adjust_precision(t_data *data, char *to_print)
@@ -106,31 +106,33 @@ apply_flag: based on the saved flags, it changes the alignment from right to lef
 changes filler from ' ' to '0', transforms width from char * to int.
 */
 
-void	apply_flag(t_data *data, int *width, char *align, char *filler)
+void	apply_flag(t_data *data, int *width, char *alignment, char *filler)
 {
 	if (!data->flag)
 		return ;
 	*width = (int)ft_atoi(data->width);
-	if (ft_strchr(data->flag, '-') || *width < 0)
-		*align = 'L';
-	if (*align == 'R' && ft_strchr(data->flag, '0') > 0 && !((data->type == 'd' || data->type == 'i' || data->type == 'u' || data->type == 'x' || data->type == 'X') && ft_strlen(data->precision) > 0))
+	if (ft_strchr(data->flag, '-') || *(width) < 0)
+		*alignment = 'L';
+	if (*alignment == 'R' && ft_strchr(data->flag, '0') > 0 && !((data->type == 'd' || data->type == 'i' || data->type == 'u' || data->type == 'x' || data->type == 'X') && ft_strlen(data->precision) > 0))
 		*filler = '0';
+	if (*(width) < 0)
+		*(width) *= -1;
 }
 
 /*
-adjust_width: based on width, aligment and filler, it determines whether the argument should
-be padded with '0' or ' ' if width is bigger than argument length. Also, whether it should be left
-aligned or not. It also handles negative integers.
+** adjust_width: based on width, aligment and filler, it determines whether the argument should
+** be padded with '0' or ' ' if width is bigger than argument length. Also, whether it should be left
+** aligned or not. It also handles negative integers.
 */
 
-char	*adjust_width(char *to_print, int width, char alignment, char fill)
+char	*adjust_width(char *to_print, int width, char alignment, char filler)
 {
 	char	*tmp;
 	char	*pad;
 	char	*padded_str;
 	char	*sign;
 	int		is_negative;
-
+	//if width == 0 ?
 	is_negative = 0;
 	if (to_print[0] == '-')
 		is_negative = 1;
@@ -138,12 +140,12 @@ char	*adjust_width(char *to_print, int width, char alignment, char fill)
 	{
 		sign = ft_substr(to_print, 0 , is_negative); //might be different if you add #?
 		pad = (char *)ft_calloc(width - ft_strlen(to_print) + 1, sizeof(char));
-		pad = ft_memset(pad, fill, width  - ft_strlen(to_print)); //another func?
+		pad = ft_memset(pad, filler, width  - ft_strlen(to_print)); //another func?
 		if (alignment == 'L')
 			tmp = ft_strjoin(to_print, pad); //3
-		if (alignment == 'R' && fill != '0')
+		if (alignment == 'R' && filler != '0')
 			tmp = ft_strjoin(pad, to_print);
-		if (alignment == 'R' && fill == '0') // && data->type > integers! & negative numbers?
+		if (alignment == 'R' && filler == '0') // && data->type > integers! & negative numbers?
 		{
 			padded_str = ft_strjoin(pad, to_print + is_negative);
 			tmp = ft_strjoin(sign, padded_str);
@@ -157,3 +159,26 @@ char	*adjust_width(char *to_print, int width, char alignment, char fill)
 	else
 		return (to_print);
 }
+
+void get_wildcard_arg(t_data *data, va_list args)
+{
+	long long int precision;
+
+	if (!data->width || !data->precision)
+		return ;
+	if (*(data->width) == '*')
+	{
+		free(data->width);
+		data->width = ft_itoa(va_arg(args, int));
+	}
+	if (*(data->precision) == '*')
+	{
+		precision = (long long int)va_arg(args, int);
+		free(data->precision);
+		if (precision >= 0)
+			data->precision = ft_itoa(precision);
+		else
+			data->precision = ft_strdup("");
+	}
+}
+

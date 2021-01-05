@@ -1,38 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   struct_functions.c                                 :+:    :+:            */
+/*   handle_types2.c                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/01/03 10:31:04 by icikrikc      #+#    #+#                 */
-/*   Updated: 2021/01/04 22:04:30 by icikrikc      ########   odam.nl         */
+/*   Created: 2021/01/04 21:23:50 by icikrikc      #+#    #+#                 */
+/*   Updated: 2021/01/04 21:24:20 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-t_data	*create_t_data(void)
+char	*handle_decimal(int nbr)
 {
-	t_data *data;
+	char *to_print;
 
-	data = (t_data*)malloc(sizeof(t_data));
-	if (!data)
-		return (NULL);
-	data->type = 0;
-	data->flag = 0;
-	data->width = 0;
-	data->precision = 0;
-	data->error = 0;
-	return (data);
+	to_print = ft_itoa(nbr);
+	return (to_print);
 }
 
-void	free_t_data(t_data *ptr_data)
+char	*handle_unsigned(unsigned int nbr)
 {
-	// if (!ptr_data || !*ptr_data)
-	// 	return (NULL);
-	free(ptr_data->flag);
-	free(ptr_data->width);
-	free(ptr_data->precision);
-	free(ptr_data);
+	char *to_print;
+
+	to_print = ft_uitoa(nbr);
+	return (to_print);
+}
+
+char	*handle_hexa(unsigned int nbr, char c)
+{
+	char	*to_print;
+	int		i;
+
+	to_print = ft_xtoa(nbr);
+	if (c == 'X')
+	{
+		i = 0;
+		while (to_print[i])
+		{
+			to_print[i] = ft_toupper(to_print[i]);
+			i++;
+		}
+	}
+	return (to_print);
 }

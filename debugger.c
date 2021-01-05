@@ -17,6 +17,7 @@ typedef	struct			s_data
 	char				*flag;
 	char				*width;
 	char				*precision;
+	int					error;
 }						t_data;
 
 t_data	*create_t_data(void)
@@ -30,6 +31,7 @@ t_data	*create_t_data(void)
 	data->flag = 0;
 	data->width = 0;
 	data->precision = 0;
+	data->error = 0;
 	return (data);
 }
 
@@ -107,7 +109,7 @@ void get_argument_info(const char *format, int *i, t_data *data)
 {
 	//not sure about where i is pointing at!
 	*i = *i + 1;
-	while (ft_strchr("cspdiouxXfyb%#-+ .*0123456789hLljz", format[*i]))
+	while (ft_strchr("cspdiuxX%-.*0123456789", format[*i]))
 	{
 		// if there are no other specifier other than conversion + this leaves width etc as null!
 		if (ft_strchr("cspdiuxX%", format[*i]))
@@ -291,10 +293,12 @@ void	apply_flag(t_data *data, int *width, char *alignment, char *filler)
 	if (!data->flag)
 		return ;
 	*width = (int)ft_atoi(data->width);
-	if (ft_strchr(data->flag, '-') || *width < 0)
+	if (ft_strchr(data->flag, '-') || *(width) < 0)
 		*alignment = 'L';
 	if (*alignment == 'R' && ft_strchr(data->flag, '0') > 0 && !((data->type == 'd' || data->type == 'i' || data->type == 'u' || data->type == 'x' || data->type == 'X') && ft_strlen(data->precision) > 0))
 		*filler = '0';
+	if (*(width) < 0)
+		*(width) *= -1;
 }
 
 char	*adjust_width(char *to_print, int width, char alignment, char filler)
@@ -353,6 +357,35 @@ void get_wildcard_arg(t_data *data, va_list args)
 	}
 }
 
+int print_nullchar(char *to_print, int width, char alignment)
+{
+	int tmp_width;
+
+	tmp_width = width;
+	free(to_print);
+	if (alignment == 'L')
+	{
+		ft_putchar_fd(0, 1);
+		while (width - 1 > 0)
+		{
+			ft_putchar_fd(' ', 1);
+			width--;
+		}
+	}
+	if (alignment == 'R')
+	{
+		while (width - 1 > 0)
+		{
+			ft_putchar_fd(' ', 1);
+			width--;
+		}
+		ft_putchar_fd(0, 1);
+	}
+	if (tmp_width == 0)
+		return (1);
+	return (tmp_width);
+}
+
 int		print_argument(va_list args, t_data *data)
 {
 	int		arg_len;
@@ -373,6 +406,8 @@ int		print_argument(va_list args, t_data *data)
 	to_print = handle_argument(args, data, to_print);
 	to_print = adjust_precision(data, to_print);
 	apply_flag(data, &width, &alignment, &filler);
+	if (data->type == 'c' && *to_print == '\0')
+		return (print_nullchar(to_print, width, alignment));
 	to_print = adjust_width(to_print, width, alignment, filler);
 	//check if to_print is null and return -1?
 	arg_len = ft_strlen(to_print);
@@ -400,7 +435,7 @@ int	parse_format(const char *format, va_list args)
 			if (!data)
 				return (-1);
 			//check if there are further symbols (cspdiouxXfyb%#-+ .*0123456789hLljz)?
-			if (!ft_strchr("cspdiouxXfyb%#-+ .*0123456789hLljz", format[i + 1])) //another function is valid_type_flag etc.
+			if (!ft_strchr("cspdiuxX%-.*0123456789", format[i + 1])) //another function is valid_type_flag etc.
 				break ; // which loop does this break from? is it okay? or return (-1)?
 			get_argument_info(format, &i, data);
 			format_len += print_argument(args, data);
@@ -435,10 +470,40 @@ int	ft_printf(const char *format, ...)
 
 int main(void)
 {
-	// int	di;
+	int	di;
 	// unsigned char c = 0x7f;
 
-	// di = 28;
+	di = 28;
+	//WILDCARD
+
+	// printf(" (%d)\n", printf("Handling wildcards"));
+	// ft_printf(" (%d)\n", ft_printf("Handling wildcards"));
+
+	// printf(" (%d)\n", printf("Mfw *1: |%*i|", 1, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw *1: |%*i|", 1, di));
+	// printf(" (%d)\n", printf("Mfw *5: |%*i|", 5, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw *5: |%*i|", 5, di));
+	// printf(" (%d)\n", printf("Mfw *5: |%*i|",5, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw *5: |%*i|", 5, di));
+	// printf(" (%d)\n", printf("Mfw *5: |%*i|",        5, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw *5: |%*i|",        5, di));
+	// printf(" (%d)\n", printf("Mfw *10: |%*i|", 10, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw *10: |%*i|", 10, di));
+	// printf(" (%d)\n", printf("Mfw *i: |%*i|", di, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw *i: |%*i|", di, di));
+	// printf(" (%d)\n", printf("Mfw **5: |%*.*i|", 5, 6, di));
+	// ft_printf(" (%d)\n", ft_printf("Mfw **5: |%*.*i|", 5, 6, di));
+	// printf("\n");
+
+	//negative *
+	// ft_printf("|%*i|\n", -5, di); //DONE
+	// printf(" (%d)\n", printf("|%c|", 0));
+	// ft_printf(" (%d)\n",ft_printf("|%c|", 0));
+	//printf(" (%d)\n", printf("|%5c|", -0));
+	//ft_printf(" (%d)\n",ft_printf("|%5c|", -0));
+	printf(" (%d)\n", printf("|%5c|", 0));
+	ft_printf(" (%d)\n",ft_printf("|%5c|", 0));
+
 
 	// STRINGS
 	// printf("%.7s\n", "hello");
@@ -462,24 +527,26 @@ int main(void)
 
 
 	//NEGATIVE *PRECISION
-	printf(" (%d)\n", printf("%*s", -3, "hello"));
-	ft_printf(" (%d)\n", ft_printf("%*s", -3, "hello"));
-	printf(" (%d)\n", printf("%.*s", -3, "hello"));
-	ft_printf(" (%d)\n", ft_printf("%.*s", -3, "hello"));
-	printf(" (%d)\n", printf("%*i", -4, 94827));
-	ft_printf(" (%d)\n", ft_printf("%*i", -4, 94827));
-	printf(" (%d)\n", printf("%*i", -14, 94827));
-	ft_printf(" (%d)\n", ft_printf("%*i", -14, 94827));
+	// printf(" (%d)\n", printf("%*s", -3, "hello"));
+	// ft_printf(" (%d)\n", ft_printf("%*s", -3, "hello"));
+	// printf(" (%d)\n", printf("%.*s", -3, "hello"));
+	// ft_printf(" (%d)\n", ft_printf("%.*s", -3, "hello"));
+	// printf(" (%d)\n", printf("%*i", -4, 94827));
+	// ft_printf(" (%d)\n", ft_printf("%*i", -4, 94827));
+	// printf(" (%d)\n", printf("%*i", -14, 94827));
+	// ft_printf(" (%d)\n", ft_printf("%*i", -14, 94827));
+
 	//CHARS
-	/*printf(" (%d)\n", printf("%c", '\0'));
-	ft_printf(" (%d)\n", ft_printf("%c", '\0'));
-	printf(" (%d)\n", printf("%5c", '\0'));
-	ft_printf(" (%d)\n", ft_printf("%5c", '\0'));
-	printf(" (%d)\n", printf("%-5c", '\0'));
-	ft_printf(" (%d)\n", ft_printf("%-5c", '\0'));
-	*/
-	printf(" (%d)\n", printf("%% *.5i 42 == |% *.5i|", 4, 42));
-	ft_printf(" (%d)\n", ft_printf("%% *.5i 42 == |% *.5i|", 4, 42));
+	// printf("%c", 0);
+	// ft_printf(" (%d)\n", ft_printf("%c", '\0'));
+	// printf(" (%d)\n", printf("%5c", '\0'));
+	// ft_printf(" (%d)\n", ft_printf("%5c", '\0'));
+	// printf(" (%d)\n", printf("%-5c", '\0'));
+	// ft_printf(" (%d)\n", ft_printf("%-5c", '\0'));
+
+
+	// printf(" (%d)\n", printf("%% *.5i 42 == |% *.5i|", 4, 42));
+	// ft_printf(" (%d)\n", ft_printf("%% *.5i 42 == |% *.5i|", 4, 42));
 
 	//my func
 	// printf("\n%s--ft func--%s\n\n", RED, RESET);

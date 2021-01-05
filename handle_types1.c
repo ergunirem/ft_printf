@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   handle_types.c                                     :+:    :+:            */
+/*   handle_types1.c                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/31 18:45:27 by icikrikc      #+#    #+#                 */
-/*   Updated: 2020/12/31 18:49:05 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/04 22:03:38 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,39 +45,5 @@ char	*handle_pointer(void *pointer)
 	str = ft_xtoa((unsigned long long int)pointer);
 	to_print = ft_strjoin("0x", str);
 	free(str);
-	return (to_print);
-}
-
-char	*handle_decimal(int nbr)
-{
-	char *to_print;
-
-	to_print = ft_itoa(nbr);
-	return (to_print);
-}
-
-char	*handle_unsigned(unsigned int nbr)
-{
-	char *to_print;
-
-	to_print = ft_uitoa(nbr);
-	return (to_print);
-}
-
-char	*handle_hexa(unsigned int nbr, char c)
-{
-	char	*to_print;
-	int		i;
-
-	to_print = ft_xtoa(nbr);
-	if (c == 'X')
-	{
-		i = 0;
-		while (to_print[i])
-		{
-			to_print[i] = ft_toupper(to_print[i]);
-			i++;
-		}
-	}
 	return (to_print);
 }

@@ -6,7 +6,7 @@
 #    By: icikrikc <icikrikc@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/12/19 09:07:29 by ergunirem     #+#    #+#                  #
-#    Updated: 2021/01/01 16:19:50 by icikrikc      ########   odam.nl          #
+#    Updated: 2021/01/04 21:24:39 by icikrikc      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,9 +15,10 @@ NAME = libftprintf.a
 SOURCE_FILES =		ft_printf.c \
 					struct_functions.c \
 					handle_arguments.c \
-					handle_types.c \
+					handle_types1.c \
+					handle_types2.c \
 					parse_flags.c \
-					print.c \
+					print.c
 
 GREEN = \033[38;5;2m
 NORMAL = \033[38;5;255m
@@ -25,32 +26,33 @@ RED = \033[38;5;1m
 BLUE = \033[38;5;4m
 
 OBJ_FILES = $(SOURCE_FILES:.c=.o)
-HEADER_FILES = ft_printf.h
-LIB_PATH = ./libft
-LIBRARY = ./libft/libft.a
+HEADER_FILE = ft_printf.h
+# LIB_PATH = ./libft
+LIBRARY = libft/libft.a
 CFLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME): $(OBJ_FILES)
-	$(MAKE) -C $(LIB_PATH)
-	ar -rcs $@ $^ $(LIBRARY)
-	ar -q $(LIBRARY) $(OBJ_FILES)
-	cp $(LIBRARY) $(NAME)
+$(NAME): $(LIBRARY) $(OBJ_FILES)
+	cp $< $@
+	ar -rc $@ $(OBJ_FILES)
 
-%.o: %.c $(HEADER_FILES)
+%.o: %.c $(HEADER_FILE)
 	@echo "$(GREEN)Compiling:$(NORMAL)"
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -c $<
 
-bonus: all
+$(LIBRARY):
+	make bonus -C libft
 
 clean:
 	@echo "$(RED)Removing all object files...$(NORMAL)"
+	make clean -C libft
 	rm -f $(OBJ_FILES)
 	@echo "$(GREEN)Succesfully removed all object files!$(NORMAL)"
 
 fclean: clean
 	@echo "$(RED)Removing libftprintf.a...$(NORMAL)"
+	rm -f $(LIBRARY)
 	rm -f $(NAME)
 	@echo "$(GREEN)Successfully removed libftprintf.a!$(NORMAL)"
 
