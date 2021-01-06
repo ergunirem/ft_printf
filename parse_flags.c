@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/12/31 18:41:17 by icikrikc      #+#    #+#                 */
-/*   Updated: 2021/01/04 22:02:57 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/06 21:08:12 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ char	*get_flag(const char *format, int *i)
 
 /*
 ** get_width: Checks for '*' wildcard exception.
-** Then, saves the following width number.
+** Else, saves the following width number. If none,
+** it saves 0 as the width.
 */
 
 char	*get_width(const char *format, int *i)
@@ -51,7 +52,7 @@ char	*get_width(const char *format, int *i)
 /*
 ** get_precision: checks if it starts with '.' for precision validation.
 ** Checks for '*' wildcard exception.
-** Then, saves the following precision number.
+** Else, saves the following precision number.
 */
 
 char	*get_precision(const char *format, int *i)
@@ -72,6 +73,34 @@ char	*get_precision(const char *format, int *i)
 	if (*i > start)
 		return (ft_substr(format, start, *i - start));
 	return (ft_strdup("0"));
+}
+
+/*
+** get_wildcard_arg: This is actually called from print_arguments
+** because it calls va_arg to save the arguments given with * flag.
+** If there's * in width/precision, it modifies the data accordingly.
+*/
+
+void	get_wildcard_arg(t_data *data, va_list args)
+{
+	int precision;
+
+	if (!data->width || !data->precision)
+		return ;
+	if (*(data->width) == '*')
+	{
+		free(data->width);
+		data->width = ft_itoa(va_arg(args, int));
+	}
+	if (*(data->precision) == '*')
+	{
+		precision = va_arg(args, int);
+		free(data->precision);
+		if (precision >= 0)
+			data->precision = ft_itoa(precision);
+		else
+			data->precision = ft_strdup("");
+	}
 }
 
 /*
