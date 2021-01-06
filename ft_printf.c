@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 10:28:28 by icikrikc      #+#    #+#                 */
-/*   Updated: 2021/01/04 22:00:27 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/06 20:35:30 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 /*
 ** get_argument_info: after '%' character, it checks valid argument/flag types,
-** if it is type conversion it saves the type in t_data, else calls parse_flag
-** func to save flag information in t_data.
+** if it is just type conversion it immediately saves the type in t_data.
+** Else, it first calls parse_flag to save flag information in t_data.
+** Then, it saves the type conversion after parsing the flags.
 */
 
 void	get_argument_info(const char *format, int *i, t_data *data)
@@ -29,20 +30,22 @@ void	get_argument_info(const char *format, int *i, t_data *data)
 			(*i)++;
 			break ;
 		}
-		else
+		else if (ft_strchr("-.*0123456789", format[*i]))
 			parse_flags(format, data, i);
 	}
 }
 
 /*
-** parse_format: itirates in format, first prints everything except %arguments.
-** Else, it creates an instance of t_data, checks for '%' and
-** calls info function to save argument informations in this t_data,
-** prints this saved info and frees t_data.
+** parse_format: itirates in format, and creates an instance of t_data.
+** It calls different print funcs if it's an argument or regular character.
+** If there is an argument calls info function to save format specifiers
+** in this t_data. Finally, it returns -1 if there has been an error.
+** Then, it frees the t_data.
 */
 
-int		parse_format(const char *format, va_list args, t_data *data)
+int		parse_format(const char *format, va_list args)
 {
+	t_data	*data;
 	int		format_len;
 	int		i;
 
@@ -50,47 +53,43 @@ int		parse_format(const char *format, va_list args, t_data *data)
 	format_len = 0;
 	while (format[i] != '\0')
 	{
+		data = create_t_data();
+		if (!data)
+			return (-1);
 		if (format[i] != '%' && format[i])
-			format_len += print_regular(format, &i);
+			format_len += print_plain_character(format, &i, data);
 		else if (format[i])
 		{
 			if (!ft_strchr("cspdiuxX%-.*0123456789", format[i + 1]))
-			{
-				data->error = 1;
 				return (-1);
-			}
 			get_argument_info(format, &i, data);
 			format_len += print_argument(args, data);
-			free_t_data(data);
 		}
+		if (data->error == 1)
+			return (-1);
+		free_t_data(data);
 	}
 	return (format_len);
 }
 
 /*
 ** ft_printf: starter function of the project.
-**So, every other function is initially called from here.
+** So, every other function is initially called from here.
 ** (The diagram of function calls can be found at diagram.jpg)
-** Finally, it returns the count of printed characters
-** when the function is successful
-** and -1 when the function fails.
+** Return value is the count of printed characters when
+** the function is successful and -1 when the function fails.
 */
 
 int		ft_printf(const char *format, ...)
 {
 	va_list	args;
-	t_data	*data;
 	int		format_len;
 
 	if (format == NULL)
 		return (0);
 	va_start(args, format);
-	data = create_t_data();
-	if (!data)
-		return (-1);
-	format_len = 0;
-	format_len += parse_format(format, args, data);
-	if (data->error == 1)
+	format_len = parse_format(format, args);
+	if (format_len == -1)
 		return (-1);
 	va_end(args);
 	return (format_len);
