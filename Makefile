@@ -6,7 +6,7 @@
 #    By: icikrikc <icikrikc@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/12/19 09:07:29 by ergunirem     #+#    #+#                  #
-#    Updated: 2021/01/04 21:24:39 by icikrikc      ########   odam.nl          #
+#    Updated: 2021/01/06 17:14:13 by icikrikc      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,10 @@ NAME = libftprintf.a
 SOURCE_FILES =		ft_printf.c \
 					struct_functions.c \
 					handle_arguments.c \
-					handle_types1.c \
-					handle_types2.c \
+					handle_types_other.c \
+					handle_types_int.c \
 					parse_flags.c \
-					print.c
+					print_funcs.c
 
 GREEN = \033[38;5;2m
 NORMAL = \033[38;5;255m
@@ -27,7 +27,6 @@ BLUE = \033[38;5;4m
 
 OBJ_FILES = $(SOURCE_FILES:.c=.o)
 HEADER_FILE = ft_printf.h
-# LIB_PATH = ./libft
 LIBRARY = libft/libft.a
 CFLAGS = -Wall -Wextra -Werror
 
