@@ -6,7 +6,7 @@
 /*   By: icikrikc <icikrikc@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/01/03 10:31:04 by icikrikc      #+#    #+#                 */
-/*   Updated: 2021/01/04 22:04:30 by icikrikc      ########   odam.nl         */
+/*   Updated: 2021/01/06 16:02:26 by icikrikc      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ t_data	*create_t_data(void)
 	return (data);
 }
 
-void	free_t_data(t_data *ptr_data)
+void	free_t_data(t_data *data)
 {
-	// if (!ptr_data || !*ptr_data)
-	// 	return (NULL);
-	free(ptr_data->flag);
-	free(ptr_data->width);
-	free(ptr_data->precision);
-	free(ptr_data);
+	if (!data)
+		return ;
+	free(data->flag);
+	free(data->width);
+	free(data->precision);
+	free(data);
 }
