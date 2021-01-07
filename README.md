@@ -46,31 +46,4 @@ options..
 2) save everything in format somewhere and parse as you go
 	 write at the end 
 ```
-```c
-Function Call Diagram
-																																						↱ free(str)
-																													                        &
-																																						↱ ft_putstr(str)                
-																													                        &        
-																																						↱ ft_strlen(str)
-																																	                &
-																																						↱ if(nullchar) -> print_nullchar()
-																																									&																																																														  
-																															              ↱ adjust_width()                   ↱ handle_char()
-																																											&                        ↱ handle_string() 
-																															              ↱ apply_flag()                     ↱ handle_pointer()
-																															                        &                        ↱ handle_decimal()
-																																						↱ adjust_precision()               ↱ handle_unsigned()
-																																							        &                        ↱ handle_hexa()
-																																					  ↱ handle_argument()  → → → → → → → → 
-																																											&																			
-                             ↱ print_plain_character()                      ↱ get_wildcard_arg()
-ft_printf() → → parse_format()                                              ↑ 
-                             ↳ create_data() & get_argument_info() & print_argument() & free_t_data()
-																						      **↓**
-																     parse_type() & parse_flags()
-								    																	↓
-																     get_flag() & get_width() & get_precision()
-                
-```
 
