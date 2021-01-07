@@ -1,5 +1,6 @@
 # ft_printf
 This is a project I have created for CODAM curriculum. You can see the ft_printf.pdf and my notes (notes.pdf) on the subject for further information.
+To run this project, clone the repo and do 'make' in your command line. Afterwards, you can call ft_printf() with any example you wish to see how it works. Remember to include "ft_printf.h" in your main file and compile the main file with libftprinf.a library.
 
 ## Summary:
 > This project is pretty straight forward. You will recode printf. Because putnbr and putstr aren’t enough. Hopefully you will be able to reuse it in future project without the fear of being flagged as a cheater. You will mainly learn how to use variadic arguments.
