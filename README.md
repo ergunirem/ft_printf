@@ -48,4 +48,4 @@ options..
 	 write at the end 
 ```
 
-![Screenshot](function-call-digram.png)
+![Screenshot](./documents/function-call-digram.png)
